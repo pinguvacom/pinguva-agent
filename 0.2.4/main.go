@@ -590,10 +590,10 @@ func bitrix24ProfileCatalog() map[string]bitrix24ProfileSpec {
 
 func runBitrix24Command(args []string, logger *log.Logger) error {
 	if len(args) == 0 {
-		return errors.New("usage: pinguva-agent bitrix24 configure --base-url https://portal.example.kz")
+		return errors.New("usage: pinguva-agent bitrix24 connect --base-url https://portal.example.kz")
 	}
 	switch args[0] {
-	case "configure":
+	case "configure", "connect", "wizard":
 		return runBitrix24Configure(args[1:], logger)
 	case "status":
 		return runBitrix24Status(args[1:], logger)
@@ -603,7 +603,7 @@ func runBitrix24Command(args []string, logger *log.Logger) error {
 }
 
 func runBitrix24Configure(args []string, logger *log.Logger) error {
-	fs := flag.NewFlagSet("bitrix24 configure", flag.ContinueOnError)
+	fs := flag.NewFlagSet("bitrix24 connect", flag.ContinueOnError)
 	baseURLFlag := fs.String("base-url", envOr("BITRIX24_BASE_URL", ""), "Bitrix24 portal base URL")
 	profilesFlag := fs.String("profiles", envOr("BITRIX24_PROFILES", strings.Join(defaultBitrix24ProfileKeys(), ",")), "Comma-separated safe Bitrix24 profiles")
 	configPathFlag := fs.String("config-path", envOr("AGENT_BITRIX24_CONFIG_PATH", defaultBitrix24ConfigPath()), "Local Bitrix24 config path")
@@ -618,7 +618,11 @@ func runBitrix24Configure(args []string, logger *log.Logger) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprint(os.Stdout, "Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL): ")
+	fmt.Fprintln(os.Stdout, "Bitrix24 local REST monitoring setup")
+	fmt.Fprintf(os.Stdout, "Portal / Портал: %s\n", baseURL)
+	fmt.Fprintln(os.Stdout, "Create an incoming webhook in Bitrix24 and paste it here.")
+	fmt.Fprintln(os.Stdout, "Создайте входящий webhook в Bitrix24 и вставьте его сюда.")
+	fmt.Fprint(os.Stdout, "Bitrix24 webhook URL / Входящий webhook Bitrix24 (hidden input, not the portal URL): ")
 	webhookRaw, err := term.ReadPassword(int(os.Stdin.Fd()))
 	fmt.Fprintln(os.Stdout)
 	if err != nil {
@@ -649,6 +653,12 @@ func runBitrix24Configure(args []string, logger *log.Logger) error {
 	logger.Printf("Bitrix24 integration saved locally: %s", *configPathFlag)
 	logger.Printf("Bitrix24 profiles: %s", strings.Join(config.Profiles, ", "))
 	logger.Printf("Webhook secret stays on this server and is not sent to Pinguva.")
+	status := checkBitrix24Webhook(&http.Client{Timeout: 15 * time.Second}, config)
+	if status != nil && status.Status == "ok" {
+		logger.Printf("Bitrix24 check ok: %dms", status.ResponseMS)
+	} else if status != nil && strings.TrimSpace(status.Error) != "" {
+		logger.Printf("Bitrix24 check failed: %s", status.Error)
+	}
 	return nil
 }
 
@@ -703,7 +713,46 @@ func saveBitrix24Config(path string, config bitrix24LocalConfig) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, body, 0o600)
+	if err := os.WriteFile(path, body, 0o600); err != nil {
+		return err
+	}
+	return restrictBitrix24ConfigPermissions(path)
+}
+
+func restrictBitrix24ConfigPermissions(path string) error {
+	if runtime.GOOS == "linux" {
+		if gid, ok := lookupUnixGroupID("pinguva-agent"); ok {
+			dir := filepath.Dir(path)
+			_ = os.Chown(dir, -1, gid)
+			_ = os.Chmod(dir, 0o750)
+			_ = os.Chown(path, -1, gid)
+			return os.Chmod(path, 0o640)
+		}
+	}
+	return os.Chmod(path, 0o600)
+}
+
+func lookupUnixGroupID(name string) (int, bool) {
+	body, err := os.ReadFile("/etc/group")
+	if err != nil {
+		return 0, false
+	}
+	for _, line := range strings.Split(string(body), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.Split(line, ":")
+		if len(parts) < 3 || parts[0] != name {
+			continue
+		}
+		gid, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return 0, false
+		}
+		return gid, true
+	}
+	return 0, false
 }
 
 func collectBitrix24Status(client *http.Client, path string) *agentBitrix24Status {

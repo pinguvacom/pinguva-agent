@@ -17,18 +17,21 @@
 
 Версия `0.2.4` поддерживает безопасную локальную настройку коробочного Bitrix24.
 Webhook вводится только на сервере клиента скрытым вводом и сохраняется локально
-в root-only конфиге агента.
+в конфиге агента с ограниченными правами доступа.
 
-Минимальная команда:
+Это не отдельный агент. Используется тот же Linux-агент Pinguva, который уже
+установлен и подключен к Pinguva на сервере Bitrix24.
+
+Упрощённая команда из UI Pinguva:
 
 ```bash
-sudo pinguva-agent bitrix24 configure --base-url "https://crm.example.kz"
+curl -fsSL "https://monit.pinguva.com/install/bitrix24.sh" | sudo bash -s -- --base-url "https://crm.example.kz"
 ```
 
-Команда с явным выбором REST-профилей:
+Ручная команда без install-сценария:
 
 ```bash
-sudo pinguva-agent bitrix24 configure \
+sudo pinguva-agent bitrix24 connect \
   --base-url "https://crm.example.kz" \
   --profiles "basic,scope,crm_deals,crm_leads,crm_contacts,crm_statuses"
 ```
@@ -38,7 +41,7 @@ sudo pinguva-agent bitrix24 configure \
 Bitrix24:
 
 ```text
-Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL):
+Bitrix24 webhook URL / Входящий webhook Bitrix24 (hidden input, not the portal URL):
 ```
 
 Webhook URL не попадает в shell history, если его вводить интерактивно.

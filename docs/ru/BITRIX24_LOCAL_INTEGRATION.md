@@ -12,12 +12,14 @@ b24.example.kz
 
 Pinguva использует его, чтобы сгенерировать команду для сервера Bitrix24. Секретный вебхук в UI Pinguva не вводится.
 
+Подключение использует тот же Linux-агент Pinguva, который уже установлен на сервере Bitrix24. Отдельный агент или отдельный сервис для Bitrix24 не устанавливается.
+
 ## Что вводится в терминале
 
 После запуска команды агент спросит:
 
 ```text
-Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL):
+Bitrix24 webhook URL / Входящий webhook Bitrix24 (hidden input, not the portal URL):
 ```
 
 Сюда нужно вставить входящий вебхук, созданный внутри Bitrix24. Это секрет. Он вводится скрыто, не отображается на экране и сохраняется только локально на сервере клиента.
@@ -72,10 +74,16 @@ https://b24.example.kz/rest/1/secret_code
 
 ## Куда вставить вебхук
 
-Запустите команду, которую Pinguva сгенерировала в карточке Bitrix24. После обновления агента и перезапуска сервиса появится скрытый ввод:
+Запустите короткую команду, которую Pinguva сгенерировала в карточке Bitrix24:
+
+```bash
+curl -fsSL "https://monit.pinguva.com/install/bitrix24.sh" | sudo bash -s -- --base-url "https://b24.example.kz"
+```
+
+Команда обновит существующий Linux-агент Pinguva, запустит локальную настройку Bitrix24 и после сохранения перезапустит тот же сервис `pinguva-agent`. После запуска появится скрытый ввод:
 
 ```text
-Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL):
+Bitrix24 webhook URL / Входящий webhook Bitrix24 (hidden input, not the portal URL):
 ```
 
 Вставьте вебхук и нажмите `Enter`. Символы не будут отображаться. Это нормально.
