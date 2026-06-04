@@ -623,7 +623,7 @@ func runBitrix24Configure(args []string, logger *log.Logger) error {
 	fmt.Fprintln(os.Stdout, "Create an incoming webhook in Bitrix24 and paste it here.")
 	fmt.Fprintln(os.Stdout, "Создайте входящий webhook в Bitrix24 и вставьте его сюда.")
 	fmt.Fprint(os.Stdout, "Bitrix24 webhook URL / Входящий webhook Bitrix24 (hidden input, not the portal URL): ")
-	webhookRaw, err := term.ReadPassword(int(os.Stdin.Fd()))
+	webhookRaw, err := readHiddenTerminalLine()
 	fmt.Fprintln(os.Stdout)
 	if err != nil {
 		return err
@@ -660,6 +660,26 @@ func runBitrix24Configure(args []string, logger *log.Logger) error {
 		logger.Printf("Bitrix24 check failed: %s", status.Error)
 	}
 	return nil
+}
+
+func readHiddenTerminalLine() ([]byte, error) {
+	input := os.Stdin
+	closeInput := false
+	if !term.IsTerminal(int(input.Fd())) {
+		if runtime.GOOS == "windows" {
+			return nil, errors.New("interactive terminal is required for hidden Bitrix24 webhook input")
+		}
+		tty, err := os.OpenFile("/dev/tty", os.O_RDONLY, 0)
+		if err != nil {
+			return nil, errors.New("interactive terminal is required for hidden Bitrix24 webhook input; run the command from a terminal")
+		}
+		input = tty
+		closeInput = true
+	}
+	if closeInput {
+		defer input.Close()
+	}
+	return term.ReadPassword(int(input.Fd()))
 }
 
 func runBitrix24Status(args []string, logger *log.Logger) error {
