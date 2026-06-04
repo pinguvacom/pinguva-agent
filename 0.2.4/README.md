@@ -124,3 +124,11 @@ AGENT_SERVER=https://your-pinguva-host
 sudo systemctl restart pinguva-agent
 sudo systemctl status pinguva-agent --no-pager
 ```
+
+## Где взять Bitrix24 webhook
+
+Подробная инструкция по созданию входящего вебхука Bitrix24 и безопасному вводу
+в агент:
+
+- `../docs/ru/BITRIX24_LOCAL_INTEGRATION.md`
+- `../docs/en/BITRIX24_LOCAL_INTEGRATION.md`
