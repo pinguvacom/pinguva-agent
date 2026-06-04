@@ -33,10 +33,12 @@ sudo pinguva-agent bitrix24 configure \
   --profiles "basic,scope,crm_deals,crm_leads,crm_contacts,crm_statuses"
 ```
 
-После запуска агент спросит входящий webhook Bitrix24 скрытым вводом:
+После запуска агент спросит входящий webhook Bitrix24 скрытым вводом. Это не
+адрес портала из UI, а секретный webhook, который пользователь создаёт внутри
+Bitrix24:
 
 ```text
-Paste Bitrix24 incoming webhook URL:
+Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL):
 ```
 
 Webhook URL не попадает в shell history, если его вводить интерактивно.

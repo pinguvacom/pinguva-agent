@@ -618,7 +618,7 @@ func runBitrix24Configure(args []string, logger *log.Logger) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprint(os.Stdout, "Paste Bitrix24 incoming webhook URL: ")
+	fmt.Fprint(os.Stdout, "Paste Bitrix24 incoming webhook URL from Bitrix24 (secret, hidden input; not the portal base URL): ")
 	webhookRaw, err := term.ReadPassword(int(os.Stdin.Fd()))
 	fmt.Fprintln(os.Stdout)
 	if err != nil {
