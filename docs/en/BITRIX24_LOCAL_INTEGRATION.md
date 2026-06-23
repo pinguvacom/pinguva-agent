@@ -123,7 +123,7 @@ Pinguva can show:
 - fixed technical query categories, for example a case-insensitive CRM contact
   lookup.
 
-Starting with agent version `0.2.9`, the task first uses `/root/.my.cnf` only
+Starting with agent version `0.2.10`, the task first uses `/root/.my.cnf` only
 when it is a regular `root:root` file with strict `0600` permissions. This is a
 common self-hosted Bitrix24 setup: the password stays on the server and never
 appears in command arguments, logs or Pinguva. The agent does not change an
@@ -133,7 +133,8 @@ For MySQL and MariaDB, the agent tries `performance_schema.global_status`
 first, then `SHOW GLOBAL STATUS`, and finally
 `information_schema.GLOBAL_STATUS`. Thread status and the active query list are
 collected separately: `0` active queries and `0` seconds maximum duration are a
-healthy quiet snapshot, not an error.
+healthy quiet snapshot, not an error. A global `ALL PRIVILEGES ON *.*` grant
+includes `PROCESS`; the agent recognizes it when validating current-query access.
 
 If access logs or MySQL are unavailable to the local task, Bitrix24 REST checks
 continue. The server card shows the unavailable local summary separately.
