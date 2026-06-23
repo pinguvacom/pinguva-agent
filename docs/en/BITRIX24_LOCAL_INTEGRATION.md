@@ -123,7 +123,7 @@ Pinguva can show:
 - fixed technical query categories, for example a case-insensitive CRM contact
   lookup.
 
-Starting with agent version `0.2.10`, the task first uses `/root/.my.cnf` only
+Starting with agent version `0.2.11`, the task first uses `/root/.my.cnf` only
 when it is a regular `root:root` file with strict `0600` permissions. This is a
 common self-hosted Bitrix24 setup: the password stays on the server and never
 appears in command arguments, logs or Pinguva. The agent does not change an
@@ -135,6 +135,9 @@ first, then `SHOW GLOBAL STATUS`, and finally
 collected separately: `0` active queries and `0` seconds maximum duration are a
 healthy quiet snapshot, not an error. A global `ALL PRIVILEGES ON *.*` grant
 includes `PROCESS`; the agent recognizes it when validating current-query access.
+When grants are unavailable or do not list the privilege, a successful
+`PROCESSLIST` query remains healthy: no foreign sessions at that instant is not
+an error.
 
 If access logs or MySQL are unavailable to the local task, Bitrix24 REST checks
 continue. The server card shows the unavailable local summary separately.
@@ -203,7 +206,10 @@ sudo journalctl -u pinguva-bitrix24-diagnostics.service -n 50 --no-pager | grep 
 ```
 
 The expected file mode is `600 root root regular file`. A successful journal
-line contains `connection=defaults_extra_file`, a status source and `status=ok`.
+line contains `connection=defaults_extra_file`, a status source,
+`processlist_status=ok`, `query_groups_status=ok` and `status=ok`.
+`process_privilege_source=functional_check` is also healthy when the diagnostic
+queries themselves completed successfully.
 The next regular agent report sends aggregates to Pinguva within one or two
 minutes. Never print `/root/.my.cnf` contents in logs or support requests.
 
