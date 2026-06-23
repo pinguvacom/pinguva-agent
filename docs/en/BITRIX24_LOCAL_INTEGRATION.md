@@ -123,6 +123,12 @@ Pinguva can show:
 - fixed technical query categories, for example a case-insensitive CRM contact
   lookup.
 
+Starting with agent version `0.2.8`, the task first uses `/root/.my.cnf` when
+it is a regular file that is not writable by group or other users. This is a
+common self-hosted Bitrix24 setup: the password stays on the server and never
+appears in command arguments, logs or Pinguva. When no such file exists, the
+agent tries the standard local MySQL socket.
+
 If access logs or MySQL are unavailable to the local task, Bitrix24 REST checks
 continue. The server card shows the unavailable local summary separately.
 
