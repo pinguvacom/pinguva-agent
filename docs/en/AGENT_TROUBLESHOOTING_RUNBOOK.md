@@ -148,10 +148,13 @@ Verify:
 
 ## Bitrix24 Integration Checklist
 
-Bitrix24 local integration requires Linux agent `0.2.5` or newer.
+Bitrix24 REST checks require Linux agent `0.2.5` or newer. Local load
+diagnostics require `0.2.6` or newer.
 
 ```bash
 sudo pinguva-agent bitrix24 status
+sudo systemctl status pinguva-bitrix24-diagnostics.timer --no-pager
+sudo journalctl -u pinguva-bitrix24-diagnostics.service -n 50 --no-pager
 ```
 
 If the command is unknown, update the agent binary first.
