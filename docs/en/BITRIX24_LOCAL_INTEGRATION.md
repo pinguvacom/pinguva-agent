@@ -123,11 +123,17 @@ Pinguva can show:
 - fixed technical query categories, for example a case-insensitive CRM contact
   lookup.
 
-Starting with agent version `0.2.8`, the task first uses `/root/.my.cnf` when
-it is a regular file that is not writable by group or other users. This is a
+Starting with agent version `0.2.9`, the task first uses `/root/.my.cnf` only
+when it is a regular `root:root` file with strict `0600` permissions. This is a
 common self-hosted Bitrix24 setup: the password stays on the server and never
-appears in command arguments, logs or Pinguva. When no such file exists, the
-agent tries the standard local MySQL socket.
+appears in command arguments, logs or Pinguva. The agent does not change an
+unsafe file and uses the standard local MySQL socket instead.
+
+For MySQL and MariaDB, the agent tries `performance_schema.global_status`
+first, then `SHOW GLOBAL STATUS`, and finally
+`information_schema.GLOBAL_STATUS`. Thread status and the active query list are
+collected separately: `0` active queries and `0` seconds maximum duration are a
+healthy quiet snapshot, not an error.
 
 If access logs or MySQL are unavailable to the local task, Bitrix24 REST checks
 continue. The server card shows the unavailable local summary separately.
@@ -186,6 +192,19 @@ sudo journalctl -u pinguva-agent -n 50 --no-pager
 sudo systemctl status pinguva-bitrix24-diagnostics.timer --no-pager
 sudo journalctl -u pinguva-bitrix24-diagnostics.service -n 50 --no-pager
 ```
+
+To confirm that metrics are sent without revealing the password:
+
+```bash
+sudo stat -c '%a %U:%G %F' /root/.my.cnf
+sudo systemctl start pinguva-bitrix24-diagnostics.service
+sudo journalctl -u pinguva-bitrix24-diagnostics.service -n 50 --no-pager | grep 'Bitrix24 MySQL diagnostics'
+```
+
+The expected file mode is `600 root root regular file`. A successful journal
+line contains `connection=defaults_extra_file`, a status source and `status=ok`.
+The next regular agent report sends aggregates to Pinguva within one or two
+minutes. Never print `/root/.my.cnf` contents in logs or support requests.
 
 If the `bitrix24` command is unknown, update the agent to version `0.2.7` or newer.
 
