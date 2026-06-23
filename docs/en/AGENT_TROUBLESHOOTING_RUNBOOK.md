@@ -148,7 +148,7 @@ Verify:
 
 ## Bitrix24 Integration Checklist
 
-Bitrix24 local integration requires Linux agent `0.2.4` or newer.
+Bitrix24 local integration requires Linux agent `0.2.5` or newer.
 
 ```bash
 sudo pinguva-agent bitrix24 status

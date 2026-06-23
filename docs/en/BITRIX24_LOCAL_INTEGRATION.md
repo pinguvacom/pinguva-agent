@@ -42,13 +42,21 @@ The official Bitrix24 documentation describes this path as `Applications > Devel
 
 ## Which Permissions To Choose
 
-Minimal approach:
+For the standard profile set, grant the incoming webhook:
 
-- `basic` checks REST availability through `user.current`;
-- `scope` checks the permissions available to the webhook;
-- `crm_deals`, `crm_leads`, `crm_contacts` and `crm_statuses` require access to CRM REST methods.
+- `Users: brief data (user_brief)` for the `user.current` availability check, the `scope` granted-permissions check and the optional `user.get` check;
+- `CRM` when `crm_deals`, `crm_leads`, `crm_contacts` or `crm_statuses` are selected.
 
-Do not grant more permissions than needed. If CRM profiles are not used, do not grant CRM access.
+`scope` is not a separate Bitrix24 permission. This profile only checks the REST
+permissions already granted to the webhook.
+
+For the dedicated technical user, grant read-only access to deals, leads and
+contacts. Do not use a personal administrator account and do not grant more
+permissions than the selected profiles need. If CRM profiles are not selected,
+do not grant CRM access.
+
+The `method_discovery` profile is disabled by default. When enabled manually,
+it checks availability of `user.get` through `method.get`.
 
 ## What Exactly To Copy
 
