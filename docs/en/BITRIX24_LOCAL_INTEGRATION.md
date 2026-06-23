@@ -126,6 +126,26 @@ Pinguva can show:
 If access logs or MySQL are unavailable to the local task, Bitrix24 REST checks
 continue. The server card shows the unavailable local summary separately.
 
+## Updating An Existing Bitrix24 Integration
+
+An already configured Bitrix24 integration does not need a new webhook or a
+repeat setup. Its server card in Pinguva shows that Bitrix24 diagnostics are
+available. Copy and run the normal agent-update command.
+
+Starting with version `0.2.7`, it performs additive actions only:
+
+- updates the agent binary;
+- only when `/etc/pinguva-agent/bitrix24.json` already exists, enables local
+  diagnostics and `pinguva-bitrix24-diagnostics.timer`;
+- does not change the webhook, REST profiles or a custom access-log path;
+- starts the first local snapshot.
+
+Within one to two minutes, the card shows route, `5xx`, source and MySQL
+aggregates. Up to ten discovered important routes can be selected in the
+diagnostics section. Pinguva stores normalized paths only; the agent receives
+them in the response to its own outbound report. This creates no additional
+REST calls and does not alter Bitrix24 settings.
+
 If the access log is outside a standard system path, rerun the setup command
 with its local path. Neither the path nor log contents are sent to Pinguva:
 
@@ -161,7 +181,7 @@ sudo systemctl status pinguva-bitrix24-diagnostics.timer --no-pager
 sudo journalctl -u pinguva-bitrix24-diagnostics.service -n 50 --no-pager
 ```
 
-If the `bitrix24` command is unknown, update the agent to version `0.2.6` or newer.
+If the `bitrix24` command is unknown, update the agent to version `0.2.7` or newer.
 
 ## If The Webhook Owner Changes
 
