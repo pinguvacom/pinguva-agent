@@ -12,7 +12,7 @@ b24.example.kz
 
 Pinguva uses it to generate a command for the Bitrix24 server. The webhook secret is not entered into the Pinguva UI.
 
-The integration uses the same Pinguva Linux agent that is already installed on the Bitrix24 server. It does not install a separate Bitrix24 agent. For local load diagnostics, the setup command enables a short system timer that produces only a redacted technical summary for the regular agent to send to Pinguva.
+The integration uses the same Pinguva Linux agent that is already installed on the Bitrix24 server. It does not install a separate Bitrix24 agent. For local load diagnostics, the setup command enables a short system timer that produces only a redacted technical summary and sends it through the existing agent authorization. The primary server telemetry remains separate.
 
 ## What You Enter In The Terminal
 
@@ -108,11 +108,13 @@ The file is created with restricted permissions. Pinguva receives only a technic
 
 ## Local Load Diagnostics
 
-Starting with agent version `0.2.6`, the setup command also enables
+Starting with agent version `0.2.12`, the setup command also enables
 `pinguva-bitrix24-diagnostics.timer`. Every minute it reads only a bounded
 recent window of standard Nginx/Apache access logs and MySQL technical status
 on the customer host. This identifies routes that contribute to load without
-sending logs or CRM data to Pinguva.
+sending logs or CRM data to Pinguva. Extra collection starts only after the
+Pinguva server confirms the feature for the workspace; the agent accepts no
+diagnostic commands or parameters from the server.
 
 Pinguva can show:
 
@@ -123,7 +125,18 @@ Pinguva can show:
 - fixed technical query categories, for example a case-insensitive CRM contact
   lookup.
 
-Starting with agent version `0.2.11`, the task first uses `/root/.my.cnf` only
+The extended `Bitrix24 Load Diagnostics` section provides periods up to 24
+hours, separate REST, `5xx` and MySQL series, load incidents, heavy SQL groups
+and routes that overlap with them in time. This is correlation, not proof that a
+particular route caused a particular SQL statement.
+
+Regular history uses minute aggregates. During an incident, the same root timer
+collects at most two extra MySQL samples at a 10-second interval and stops within
+20 seconds. It is for spike investigation, not per-request tracing. Its local
+buffer of unsent events is closed to other users (`root:root`, `0700` directory,
+`0600` files) and is limited to 24 hours or 100 MiB.
+
+Starting with agent version `0.2.12`, the task first uses `/root/.my.cnf` only
 when it is a regular `root:root` file with strict `0600` permissions. This is a
 common self-hosted Bitrix24 setup: the password stays on the server and never
 appears in command arguments, logs or Pinguva. The agent does not change an
@@ -148,7 +161,7 @@ An already configured Bitrix24 integration does not need a new webhook or a
 repeat setup. Its server card in Pinguva shows that Bitrix24 diagnostics are
 available. Copy and run the normal agent-update command.
 
-Starting with version `0.2.7`, it performs additive actions only:
+Starting with version `0.2.12`, it performs additive actions only:
 
 - updates the agent binary;
 - only when `/etc/pinguva-agent/bitrix24.json` already exists, enables local
@@ -157,7 +170,7 @@ Starting with version `0.2.7`, it performs additive actions only:
 - starts the first local snapshot.
 
 Within one to two minutes, the card shows route, `5xx`, source and MySQL
-aggregates. Up to ten discovered important routes can be selected in the
+aggregates plus period history. Up to ten discovered important routes can be selected in the
 diagnostics section. Pinguva stores normalized paths only; the agent receives
 them in the response to its own outbound report. This creates no additional
 REST calls and does not alter Bitrix24 settings.
@@ -186,7 +199,9 @@ Pinguva does not receive:
 - files or attachments.
 - raw access-log lines;
 - URL parameters, cookies or authorization headers;
-- SQL text or SQL values.
+- source SQL or SQL values. When the agent can safely remove values, it may send
+  only a redacted `SELECT` structure; otherwise it sends only digest, category
+  and technical counters.
 
 ## Check After Setup
 
@@ -209,11 +224,10 @@ The expected file mode is `600 root root regular file`. A successful journal
 line contains `connection=defaults_extra_file`, a status source,
 `processlist_status=ok`, `query_groups_status=ok` and `status=ok`.
 `process_privilege_source=functional_check` is also healthy when the diagnostic
-queries themselves completed successfully.
-The next regular agent report sends aggregates to Pinguva within one or two
-minutes. Never print `/root/.my.cnf` contents in logs or support requests.
+queries themselves completed successfully. The root-only timer sends historical
+aggregates within one or two minutes. Never print `/root/.my.cnf` contents in logs or support requests.
 
-If the `bitrix24` command is unknown, update the agent to version `0.2.7` or newer.
+If the `bitrix24` command is unknown, update the agent to version `0.2.12` or newer.
 
 ## If The Webhook Owner Changes
 
