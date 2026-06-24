@@ -1,95 +1,107 @@
-# Pinguva Agent Source Archive
+# Pinguva Agent - Server Monitoring and Bitrix24 Diagnostics
 
-English below.
+[Pinguva](https://pinguva.com) is a SaaS infrastructure monitoring platform for IT outsourcing teams, web studios, system administrators, product teams, and companies managing multiple servers and customer projects.
 
-## Русский
+The Pinguva platform monitors websites, APIs, TCP services, Ping availability, TLS certificates, domains, and server telemetry through lightweight Linux and Windows agents. Synthetic website, API, TCP, Ping, TLS, and domain checks are platform capabilities. The agent collects local server telemetry and reports it to Pinguva.
 
-Этот каталог хранит публикуемые исходники агента Pinguva по версиям.
+For self-hosted Bitrix24 installations, Pinguva Agent provides privacy-safe REST and MySQL diagnostics. It does not send webhook secrets, MySQL passwords, CRM records, raw access logs, source SQL values, configuration-file contents, or HTTP request and response bodies to the Pinguva platform.
 
-Pinguva как платформа мониторинга, её backend, SaaS-сервис и внутренняя серверная логика не входят в этот архив и остаются закрытой частью продукта.
-Публикуемый здесь код нужен только для прозрачности и аудита агента.
+## Key capabilities
 
-Что важно для review:
-- агент не принимает входящие подключения;
-- работает только через исходящий HTTPS;
-- не выполняет удалённые команды;
-- не отправляет содержимое конфигурационных файлов;
-- это можно проверить по исходникам в каталогах версий.
+Pinguva Agent provides the following confirmed capabilities:
 
-Структура:
-- `0.2.3/` — исходный код агента версии 0.2.3
-- `0.2.4/` — исходный код агента версии 0.2.4 с локальной настройкой Bitrix24 и REST summary-профилями
-- `0.2.5/` — исходный код агента версии 0.2.5 с исправленной проверкой доступности метода Bitrix24
-- `0.2.6/` — исходный код агента версии 0.2.6 с локальной сводкой нагрузки Bitrix24 из access log и MySQL без передачи сырых данных
-- `0.2.7/` — исходный код агента версии 0.2.7 с безопасным обновлением существующей локальной интеграции Bitrix24 и выбором важных маршрутов
-- `0.2.8/` — исходный код агента версии 0.2.8 с явным безопасным использованием локального `/root/.my.cnf` для диагностики MySQL
-- `0.2.9/` — исходный код агента версии 0.2.9 с совместимой диагностикой MySQL/MariaDB и независимой обработкой статуса и активных запросов
-- `0.2.10/` — исходный код агента версии 0.2.10 с корректным распознаванием глобального `ALL PRIVILEGES` для диагностики MySQL
-- `0.2.11/` — исходный код агента версии 0.2.11 с функциональной проверкой доступа к PROCESSLIST и точными статусами MySQL
-- `docs/` — публичная документация по агенту и безопасным интеграциям
-- `examples/` — примеры collector-кода для разработчиков клиентов
+- Versioned Linux and Windows agent source snapshots.
+- Server telemetry collection for CPU, memory, disk, network, uptime, and Ping.
+- Linux Disk I/O, watched-service, and configuration-change telemetry.
+- Outbound reporting to the configured Pinguva endpoint. The agent does not open inbound listening ports.
+- No remote command execution from the Pinguva platform. The agent may invoke local operating-system utilities only for its own collection and service-management tasks.
+- Local Bitrix24 REST checks and self-hosted Bitrix24 load diagnostics on supported Linux installations.
+- Public integration guides, troubleshooting runbooks, and API Collector examples.
 
-Каждая версия самодостаточна и содержит:
-- исходники Linux/Windows агента;
-- свой `go.mod`;
-- `README.md`;
-- `LICENSE`;
-- `SECURITY.md`;
-- `PRIVACY.md`;
-- `CHANGELOG.md`.
+In the documented production configuration, the agent communicates with Pinguva over outbound HTTPS. Development and test configuration can use a separately configured local HTTP endpoint.
 
-Каталог предназначен для ручной публикации отдельных версий в открытых репозиториях.
-Версионирование ведётся по релизам агента, как уже начато с `0.2.3`.
+## Self-hosted Bitrix24 monitoring
 
-Полезные публичные материалы:
-- `docs/ru/AGENT_TROUBLESHOOTING_RUNBOOK.md` — диагностика проблем с агентом на стороне клиента
-- `docs/ru/API_COLLECTOR_INTEGRATION.md` — подключение сборщика API без передачи персональных данных
-- `docs/ru/BITRIX24_LOCAL_INTEGRATION.md` — создание входящего вебхука Bitrix24 и локальная настройка агента
-- `docs/en/AGENT_TROUBLESHOOTING_RUNBOOK.md` — English troubleshooting runbook
-- `docs/en/API_COLLECTOR_INTEGRATION.md` — English API Collector guide
-- `docs/en/BITRIX24_LOCAL_INTEGRATION.md` — English Bitrix24 local integration guide
-- `examples/business-api-collector/` — минимальные примеры для Node.js, PHP и FastAPI
+Pinguva Agent helps technical teams investigate load on self-hosted Bitrix24 by collecting local technical aggregates for REST activity and MySQL. It provides diagnostic data that helps identify likely sources of load and investigate short-lived incidents. It does not claim to determine the exact cause of every incident automatically.
 
-Старые ссылки `docs/AGENT_TROUBLESHOOTING_RUNBOOK.md` и
-`docs/API_COLLECTOR_INTEGRATION.md` сохранены как страницы выбора языка.
+For a compatible, locally configured Bitrix24 installation, version `0.2.12` can collect:
 
-## English
+- REST request activity, 5xx counts, and route aggregates without query strings.
+- REST method availability and latency for selected profiles.
+- MySQL connection and activity counters, including `Threads_running` and active-query metrics when available.
+- Long-running query categories, SQL digest aggregates, examined-row counters, no-index markers, and supported lock-wait information.
+- Minute-level diagnostic history and load incidents.
 
-This directory stores public Pinguva agent source snapshots by release version.
+The webhook remains only on the customer server. MySQL credentials remain local. Pinguva receives bounded technical aggregates only. The agent does not send CRM records, raw access-log lines, original SQL text or values, HTTP bodies, configuration-file contents, Bitrix24 webhook secrets, or MySQL passwords. A normalized `SELECT` structure is sent only when safe redaction succeeds; otherwise only the digest, category, and counters are sent.
 
-Pinguva as a monitoring platform, its backend, SaaS service and internal server
-logic are not part of this archive and remain closed-source. The code published
-here is provided for transparency and agent security review.
+## Security model
 
-Important review points:
+- The agent does not accept inbound network connections.
+- It reports outward to Pinguva and does not expose a control endpoint for remote commands.
+- Bitrix24 webhooks and MySQL credentials are stored and used locally on the customer server.
+- The agent does not transmit configuration-file contents. Configuration monitoring reports bounded metadata and a SHA-256 fingerprint rather than file content.
+- Bitrix24 diagnostics use aggregates and redacted data. Raw access logs, CRM data, raw SQL values, and HTTP request or response bodies are excluded.
 
-- the agent does not accept inbound connections;
-- the agent works through outbound HTTPS only;
-- the agent does not execute remote commands;
-- the agent does not send configuration file contents;
-- this can be verified in the versioned source directories.
+See [Security Policy](./SECURITY.md) and [Privacy Notes](./PRIVACY.md) for the detailed scope.
 
-Structure:
+## Repository contents
 
-- `0.2.3/` — agent source code for version 0.2.3
-- `0.2.4/` — agent source code for version 0.2.4 with local Bitrix24 checks
-- `0.2.5/` — agent source code for version 0.2.5 with a fixed Bitrix24 method-availability check
-- `0.2.6/` — agent source code for version 0.2.6 with a local Bitrix24 load summary from access logs and MySQL without raw-data transfer
-- `0.2.7/` — agent source code for version 0.2.7 with safe upgrades of existing local Bitrix24 integrations and important-route selection
-- `0.2.8/` — agent source code for version 0.2.8 with explicit safe use of local `/root/.my.cnf` for MySQL diagnostics
-- `0.2.9/` — agent source code for version 0.2.9 with compatible MySQL/MariaDB diagnostics and independent status/process-list handling
-- `0.2.10/` — agent source code for version 0.2.10 with correct global `ALL PRIVILEGES` handling for MySQL diagnostics
-- `0.2.11/` — agent source code for version 0.2.11 with functional PROCESSLIST access checks and accurate MySQL statuses
-- `docs/ru/` — Russian documentation
-- `docs/en/` — English documentation
-- `examples/` — API Collector examples for customer developers
+This repository contains:
 
-Useful public materials:
+- Release-specific source snapshots of Pinguva Agent.
+- Linux and Windows agent source code in each snapshot.
+- Security, privacy, and license documents.
+- Bitrix24 local integration documentation.
+- Agent troubleshooting runbooks.
+- API Collector integration documentation and examples for Node.js, PHP, and FastAPI.
 
-- `docs/en/AGENT_TROUBLESHOOTING_RUNBOOK.md` — troubleshooting runbook
-- `docs/en/API_COLLECTOR_INTEGRATION.md` — API Collector integration guide
-- `docs/en/BITRIX24_LOCAL_INTEGRATION.md` — Bitrix24 local integration guide
-- `docs/ru/AGENT_TROUBLESHOOTING_RUNBOOK.md` — Russian troubleshooting runbook
-- `docs/ru/API_COLLECTOR_INTEGRATION.md` — Russian API Collector guide
-- `docs/ru/BITRIX24_LOCAL_INTEGRATION.md` — Russian Bitrix24 local integration guide
-- `examples/business-api-collector/` — minimal examples for Node.js, PHP and FastAPI
+Each version directory is self-contained and includes its own `go.mod`, README, license, security notes, privacy notes, and changelog.
+
+## Source snapshots
+
+- [`0.2.3`](./0.2.3)
+- [`0.2.4`](./0.2.4)
+- [`0.2.5`](./0.2.5)
+- [`0.2.6`](./0.2.6)
+- [`0.2.7`](./0.2.7)
+- [`0.2.8`](./0.2.8)
+- [`0.2.9`](./0.2.9)
+- [`0.2.10`](./0.2.10)
+- [`0.2.11`](./0.2.11)
+- [`0.2.12`](./0.2.12)
+
+## Repository scope
+
+This repository contains the source code of the Pinguva monitoring agent for transparency and security review.
+
+The Pinguva SaaS backend, web application, internal server-side logic, alerting infrastructure, and commercial platform components are not included and remain closed-source.
+
+Pinguva Agent is not the complete Pinguva SaaS platform and this repository does not provide a self-hosted Pinguva backend.
+
+## Current source version
+
+The latest published source snapshot is [`0.2.12`](./0.2.12). It is also published as [Pinguva Agent v0.2.12](https://github.com/pinguvacom/pinguva-agent/releases/tag/v0.2.12).
+
+Confirmed additions in `0.2.12` include minute-level self-hosted Bitrix24 REST and MySQL aggregates, bounded local buffering of unsent diagnostics, optional MySQL lock-wait metrics, safe SQL-digest aggregation, and compatibility with an older Pinguva backend that does not support the optional diagnostics endpoint. See [`0.2.12/CHANGELOG.md`](./0.2.12/CHANGELOG.md) for release-specific details.
+
+## Documentation
+
+- [Bitrix24 Local Integration](./docs/en/BITRIX24_LOCAL_INTEGRATION.md)
+- [API Collector Integration](./docs/en/API_COLLECTOR_INTEGRATION.md)
+- [Agent Troubleshooting Runbook](./docs/en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [API Collector examples](./examples/business-api-collector/README.md)
+- [Documentation index and Russian documentation](./docs/README.md)
+
+## Links
+
+- [Pinguva website](https://pinguva.com)
+- [Bitrix24 integration](https://pinguva.com/bitrix24-integration/)
+- [Pinguva application](https://monit.pinguva.com)
+
+## Contributing and reporting issues
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a public issue or pull request. Do not put webhook URLs, tokens, passwords, customer data, raw logs, or security-vulnerability details into public reports.
+
+## Russian documentation
+
+Русская документация сохранена в [docs/ru](./docs/ru/). Для обзора всех публичных документов используйте [docs/README.md](./docs/README.md).
