@@ -144,9 +144,9 @@ func TestCollectBitrix24AccessLogSummaryRedactsAndAggregates(t *testing.T) {
 	logPath := filepath.Join(t.TempDir(), "access.log")
 	stamp := now.Format("02/Jan/2006:15:04:05 -0700")
 	lines := []string{
-		`20.86.251.108 - - [` + stamp + `] "GET /api/accruedpoints?customer=42&token=secret HTTP/1.1" 200 123 "-" "test"`,
-		`20.86.251.108 - - [` + stamp + `] "POST /api/contact/550e8400-e29b-41d4-a716-446655440000 HTTP/1.1" 503 123 "-" "test"`,
-		`20.86.251.108 - - [` + stamp + `] "GET /assets/app.js HTTP/1.1" 200 123 "-" "test"`,
+		`203.0.113.10 - - [` + stamp + `] "GET /api/accruedpoints?customer=42&token=secret HTTP/1.1" 200 123 "-" "test"`,
+		`203.0.113.10 - - [` + stamp + `] "POST /api/contact/550e8400-e29b-41d4-a716-446655440000 HTTP/1.1" 503 123 "-" "test"`,
+		`203.0.113.10 - - [` + stamp + `] "GET /assets/app.js HTTP/1.1" 200 123 "-" "test"`,
 	}
 	if err := os.WriteFile(logPath, []byte(strings.Join(lines, "\n")+"\n"), 0o600); err != nil {
 		t.Fatalf("write access log: %v", err)
@@ -167,7 +167,7 @@ func TestCollectBitrix24AccessLogSummaryRedactsAndAggregates(t *testing.T) {
 			t.Fatalf("sensitive route data leaked into summary: %+v", endpoint)
 		}
 	}
-	if len(summary.TopSources) != 1 || summary.TopSources[0].Source != "20.86.251.xxx" {
+	if len(summary.TopSources) != 1 || summary.TopSources[0].Source != "203.0.113.xxx" {
 		t.Fatalf("expected masked source, got %+v", summary.TopSources)
 	}
 }
