@@ -9,12 +9,16 @@ Documents:
 - [API Collector Integration](en/API_COLLECTOR_INTEGRATION.md)
 - [Bitrix24 Local Integration](en/BITRIX24_LOCAL_INTEGRATION.md)
 - [Agent Troubleshooting Runbook](en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [MySQL, MariaDB and PostgreSQL Diagnostics](en/DATABASE_DIAGNOSTICS.md)
+- [Business API Monitoring with Pinguva Agent](en/BUSINESS_API_AGENT_INTEGRATION.md)
 
 Russian versions:
 
 - [Интеграция сборщика API](ru/API_COLLECTOR_INTEGRATION.md)
 - [Локальная интеграция Bitrix24](ru/BITRIX24_LOCAL_INTEGRATION.md)
 - [Диагностика агента Pinguva](ru/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [Диагностика MySQL, MariaDB и PostgreSQL](ru/DATABASE_DIAGNOSTICS.md)
+- [Мониторинг бизнес-API через Pinguva Agent](ru/BUSINESS_API_AGENT_INTEGRATION.md)
 
 These documents are safe to publish. They do not contain backend internals, secrets,
 customer data or private repository paths.
@@ -28,12 +32,16 @@ customer data or private repository paths.
 - [Интеграция сборщика API](ru/API_COLLECTOR_INTEGRATION.md)
 - [Локальная интеграция Bitrix24](ru/BITRIX24_LOCAL_INTEGRATION.md)
 - [Диагностика агента Pinguva](ru/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [Диагностика MySQL, MariaDB и PostgreSQL](ru/DATABASE_DIAGNOSTICS.md)
+- [Мониторинг бизнес-API через Pinguva Agent](ru/BUSINESS_API_AGENT_INTEGRATION.md)
 
 Английские версии:
 
 - [API Collector Integration](en/API_COLLECTOR_INTEGRATION.md)
 - [Bitrix24 Local Integration](en/BITRIX24_LOCAL_INTEGRATION.md)
 - [Agent Troubleshooting Runbook](en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [MySQL, MariaDB and PostgreSQL Diagnostics](en/DATABASE_DIAGNOSTICS.md)
+- [Business API Monitoring with Pinguva Agent](en/BUSINESS_API_AGENT_INTEGRATION.md)
 
 Эти документы можно публиковать. В них нет внутренней логики backend, секретов,
 данных клиентов и приватных путей репозитория.

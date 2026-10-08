@@ -16,6 +16,8 @@ Pinguva Agent provides the following confirmed capabilities:
 - Outbound reporting to the configured Pinguva endpoint. The agent does not open inbound listening ports.
 - No remote command execution from the Pinguva platform. The agent may invoke local operating-system utilities only for its own collection and service-management tasks.
 - Local Bitrix24 REST checks and self-hosted Bitrix24 load diagnostics on supported Linux installations.
+- Local MySQL, MariaDB, and PostgreSQL diagnostics on supported Linux installations.
+- Business API route diagnostics from local Linux access logs when routes are configured in Pinguva.
 - Public integration guides, troubleshooting runbooks, and API Collector examples.
 
 In the documented production configuration, the agent communicates with Pinguva over outbound HTTPS. Development and test configuration can use a separately configured local HTTP endpoint.
@@ -24,7 +26,7 @@ In the documented production configuration, the agent communicates with Pinguva 
 
 Pinguva Agent helps technical teams investigate load on self-hosted Bitrix24 by collecting local technical aggregates for REST activity and MySQL. It provides diagnostic data that helps identify likely sources of load and investigate short-lived incidents. It does not claim to determine the exact cause of every incident automatically.
 
-For a compatible, locally configured Bitrix24 installation, version `0.2.12` can collect:
+For a compatible, locally configured Bitrix24 installation, version `0.2.12` and newer can collect:
 
 - REST request activity, 5xx counts, and route aggregates without query strings.
 - REST method availability and latency for selected profiles.
@@ -34,6 +36,12 @@ For a compatible, locally configured Bitrix24 installation, version `0.2.12` can
 
 The webhook remains only on the customer server. MySQL credentials remain local. Pinguva receives bounded technical aggregates only. The agent does not send CRM records, raw access-log lines, original SQL text or values, HTTP bodies, configuration-file contents, Bitrix24 webhook secrets, or MySQL passwords. A normalized `SELECT` structure is sent only when safe redaction succeeds; otherwise only the digest, category, and counters are sent.
 
+## Business API route monitoring
+
+Starting with `0.2.14`, Pinguva Agent can monitor customer-specific API routes from local Linux access logs after routes are selected in the Pinguva interface.
+
+The agent reports aggregated technical counters only: route, HTTP method, request count, response-code groups, latency when the log format contains request time, and masked traffic sources. It does not send request bodies, response bodies, headers, cookies, query strings, tokens, raw access-log lines, or personal data.
+
 ## Security model
 
 - The agent does not accept inbound network connections.
@@ -41,6 +49,7 @@ The webhook remains only on the customer server. MySQL credentials remain local.
 - Bitrix24 webhooks and MySQL credentials are stored and used locally on the customer server.
 - The agent does not transmit configuration-file contents. Configuration monitoring reports bounded metadata and a SHA-256 fingerprint rather than file content.
 - Bitrix24 diagnostics use aggregates and redacted data. Raw access logs, CRM data, raw SQL values, and HTTP request or response bodies are excluded.
+- Business API diagnostics use configured route patterns and aggregated counters. Raw access-log lines, query strings, request bodies, response bodies, headers, cookies, and tokens are excluded.
 
 See [Security Policy](./SECURITY.md) and [Privacy Notes](./PRIVACY.md) for the detailed scope.
 
@@ -54,6 +63,8 @@ This repository contains:
 - Bitrix24 local integration documentation.
 - Agent troubleshooting runbooks.
 - API Collector integration documentation and examples for Node.js, PHP, and FastAPI.
+- Database diagnostics documentation for MySQL, MariaDB, and PostgreSQL.
+- Business API route monitoring documentation for Linux access-log based diagnostics.
 
 Each version directory is self-contained and includes its own `go.mod`, README, license, security notes, privacy notes, and changelog.
 
@@ -69,6 +80,8 @@ Each version directory is self-contained and includes its own `go.mod`, README, 
 - [`0.2.10`](./0.2.10)
 - [`0.2.11`](./0.2.11)
 - [`0.2.12`](./0.2.12)
+- [`0.2.13`](./0.2.13)
+- [`0.2.14`](./0.2.14)
 
 ## Repository scope
 
@@ -80,15 +93,17 @@ Pinguva Agent is not the complete Pinguva SaaS platform and this repository does
 
 ## Current source version
 
-The latest published source snapshot is [`0.2.12`](./0.2.12). It is also published as [Pinguva Agent v0.2.12](https://github.com/pinguvacom/pinguva-agent/releases/tag/v0.2.12).
+The latest published source snapshot is [`0.2.14`](./0.2.14).
 
-Confirmed additions in `0.2.12` include minute-level self-hosted Bitrix24 REST and MySQL aggregates, bounded local buffering of unsent diagnostics, optional MySQL lock-wait metrics, safe SQL-digest aggregation, and compatibility with an older Pinguva backend that does not support the optional diagnostics endpoint. See [`0.2.12/CHANGELOG.md`](./0.2.12/CHANGELOG.md) for release-specific details.
+Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreSQL diagnostics in `0.2.13`, and Business API route monitoring from local Linux access logs in `0.2.14`. See [`0.2.13/CHANGELOG.md`](./0.2.13/CHANGELOG.md) and [`0.2.14/CHANGELOG.md`](./0.2.14/CHANGELOG.md) for release-specific details.
 
 ## Documentation
 
 - [Bitrix24 Local Integration](./docs/en/BITRIX24_LOCAL_INTEGRATION.md)
 - [API Collector Integration](./docs/en/API_COLLECTOR_INTEGRATION.md)
 - [Agent Troubleshooting Runbook](./docs/en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
+- [MySQL, MariaDB and PostgreSQL Diagnostics](./docs/en/DATABASE_DIAGNOSTICS.md)
+- [Business API Monitoring with Pinguva Agent](./docs/en/BUSINESS_API_AGENT_INTEGRATION.md)
 - [API Collector examples](./examples/business-api-collector/README.md)
 - [Documentation index and Russian documentation](./docs/README.md)
 

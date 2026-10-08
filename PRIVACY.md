@@ -4,11 +4,11 @@
 
 Pinguva Agent sends only the technical data needed for monitoring. The published source code is intended to make this boundary reviewable.
 
-The agent can send server telemetry such as CPU, memory, disk, network, uptime, and Ping. On Linux it can also send Disk I/O, watched-service status, and bounded configuration-change metadata. For a configured, compatible self-hosted Bitrix24 integration, it can send REST status and latency, safe result counts, minute-level REST and MySQL aggregates, SQL digests, safe normalized `SELECT` structure when redaction succeeds, and supported lock-wait counters.
+The agent can send server telemetry such as CPU, memory, disk, network, uptime, and Ping. On Linux it can also send Disk I/O, watched-service status, and bounded configuration-change metadata. For a configured, compatible self-hosted Bitrix24 integration, it can send REST status and latency, safe result counts, minute-level REST and MySQL aggregates, SQL digests, safe normalized `SELECT` structure when redaction succeeds, and supported lock-wait counters. For configured database diagnostics it can send MySQL, MariaDB, or PostgreSQL technical counters and safe query-group aggregates. For configured Business API monitoring it can send route-level counters from local access logs.
 
-The agent does not send configuration-file contents, Bitrix24 webhook URLs, MySQL passwords, OAuth or API tokens, CRM records, raw access logs, URL query parameters, cookies, authorization headers, original SQL, SQL values, HTTP request or response bodies, or arbitrary files. It does not accept inbound network connections or execute remote commands received from Pinguva.
+The agent does not send configuration-file contents, Bitrix24 webhook URLs, database passwords, OAuth or API tokens, CRM records, raw access logs, URL query parameters, cookies, authorization headers, original SQL, SQL values, HTTP request or response bodies, or arbitrary files. It does not accept inbound network connections or execute remote commands received from Pinguva.
 
-The documented production configuration sends reports through outbound HTTPS to Pinguva. Bitrix24 webhooks and MySQL credentials remain on the customer server.
+The documented production configuration sends reports through outbound HTTPS to Pinguva. Bitrix24 webhooks and database credentials remain on the customer server.
 
 ## Русский
 
@@ -25,6 +25,11 @@ Pinguva Agent отправляет в платформу только техни
   MySQL, ожидания блокировок при наличии совместимого Performance Schema и
   дельты SQL digest; безопасная структура `SELECT` передаётся только после
   удаления значений, иначе передаются только digest, категория и счётчики;
+- для диагностики СУБД `0.2.13+`: технические счётчики MySQL, MariaDB или
+  PostgreSQL и безопасные агрегаты групп запросов;
+- для мониторинга бизнес-API `0.2.14+`: маршруты, HTTP-методы, группы кодов
+  ответа, количество запросов, задержку при наличии request time в access-log и
+  маскированные источники трафика;
 - metadata по watched config profiles:
   - путь;
   - тип записи;
@@ -36,9 +41,11 @@ Pinguva Agent отправляет в платформу только техни
 Что агент не отправляет:
 - содержимое конфигурационных файлов;
 - Bitrix24 webhook URL;
+- пароли баз данных;
 - OAuth token, access token, refresh token;
 - CRM-данные и тела ответов Bitrix24;
 - сырые access log и параметры URL;
+- query string, тела запросов и тела ответов API;
 - cookies и заголовки авторизации;
 - исходный SQL и его значения;
 - телефоны, email, комментарии, названия сделок и пользовательские поля;
