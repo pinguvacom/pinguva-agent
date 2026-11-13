@@ -71,6 +71,45 @@ file missing, read permission denied, or format unrecognized. A readable default
 access log cannot hide a bad application-log path. Check the path on the selected
 agent server, not on the Pinguva platform server:
 
+### Outbound request JSON logs (agent 0.2.21+)
+
+Agent 0.2.21 supports consecutive pretty-printed JSON objects as well as JSONL.
+The supported fields are `time` (server-local time or ISO time with a zone),
+`method`, `url`, `httpCode`, and `totalTime` (seconds). The `name` and
+`requestUrl` fields are not needed for aggregation: the configured route matches
+the `url` template. Actual request URLs, UUIDs, and query parameters are not sent.
+
+```json
+{
+  "time": "13.11.2026 10:23:44",
+  "name": "getPoints",
+  "method": "GET",
+  "url": "https://api.example.com/api/consumers/:uuid",
+  "httpCode": 200,
+  "totalTime": 0.146
+}
+```
+
+An `httpCode` of `0` is not an HTTP response; it is counted as unexpected, not
+successful. Connection failures should ideally have a separate technical flag.
+
+Configure each route with an absolute **local file path on the agent server**,
+for example `/home/bitrix/www/ilab/monitoring/request.json` for regular calls
+and `/home/bitrix/www/ilab/monitoring/sms.json` for SMS. Confirm the real disk
+path on that server; a website URL does not establish the local path. Several
+routes can use the same `request.json`; method and path select their records.
+Configure the actual GET/POST method and a path containing `:uuid` or `:value`.
+The agent service user needs read access. The collector reads at most the last
+32 MiB of each file and only reports the last completed minute, without
+backfilling historical records.
+
+Do not enter a public HTTPS log URL as the log path. The agent reads files
+locally; it does not fetch logs from websites. Deny web access to
+`/ilab/monitoring/`, especially when `requestUrl` contains real identifiers or
+other request parameters.
+
+Check access without printing the file contents:
+
 ```bash
 sudo -u pinguva-agent test -r /absolute/path/to/app/log/request_orders.txt \
   && echo readable || echo missing_or_denied

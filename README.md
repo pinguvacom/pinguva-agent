@@ -88,6 +88,7 @@ Each version directory is self-contained and includes its own `go.mod`, README, 
 - [`0.2.18`](./0.2.18)
 - [`0.2.19`](./0.2.19)
 - [`0.2.20`](./0.2.20)
+- [`0.2.21`](./0.2.21)
 
 ## Repository scope
 
@@ -99,9 +100,9 @@ Pinguva Agent is not the complete Pinguva SaaS platform and this repository does
 
 ## Current source version
 
-The latest published source snapshot is [`0.2.20`](./0.2.20).
+The latest published source snapshot is [`0.2.21`](./0.2.21).
 
-Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreSQL diagnostics in `0.2.13`, Business API route monitoring from local Linux access logs in `0.2.14`, safe application log paths in `0.2.15`, automatic access-log discovery in `0.2.16`, status-before-request access-log formats in `0.2.17`, named route-parameter matching in `0.2.18`, JSONL and multiline PHP/cURL log detection in `0.2.19`, and per-route log availability in `0.2.20`. See the release-specific `CHANGELOG.md` files for details.
+Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreSQL diagnostics in `0.2.13`, Business API route monitoring from local Linux access logs in `0.2.14`, safe application log paths in `0.2.15`, automatic access-log discovery in `0.2.16`, status-before-request access-log formats in `0.2.17`, named route-parameter matching in `0.2.18`, JSONL and multiline PHP/cURL log detection in `0.2.19`, per-route log availability in `0.2.20`, and local multiline outbound API JSON logs in `0.2.21`. See the release-specific `CHANGELOG.md` files for details.
 
 ## Documentation
 
