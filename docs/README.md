@@ -11,6 +11,7 @@ Documents:
 - [Agent Troubleshooting Runbook](en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
 - [MySQL, MariaDB and PostgreSQL Diagnostics](en/DATABASE_DIAGNOSTICS.md)
 - [Business API Monitoring with Pinguva Agent](en/BUSINESS_API_AGENT_INTEGRATION.md)
+- [Security review for customer IT and security teams](en/SECURITY_REVIEW.md)
 
 Russian versions:
 
@@ -19,6 +20,7 @@ Russian versions:
 - [Диагностика агента Pinguva](ru/AGENT_TROUBLESHOOTING_RUNBOOK.md)
 - [Диагностика MySQL, MariaDB и PostgreSQL](ru/DATABASE_DIAGNOSTICS.md)
 - [Мониторинг бизнес-API через Pinguva Agent](ru/BUSINESS_API_AGENT_INTEGRATION.md)
+- [Описание Pinguva Agent для службы ИБ](ru/SECURITY_REVIEW.md)
 
 These documents are safe to publish. They do not contain backend internals, secrets,
 customer data or private repository paths.
@@ -34,6 +36,7 @@ customer data or private repository paths.
 - [Диагностика агента Pinguva](ru/AGENT_TROUBLESHOOTING_RUNBOOK.md)
 - [Диагностика MySQL, MariaDB и PostgreSQL](ru/DATABASE_DIAGNOSTICS.md)
 - [Мониторинг бизнес-API через Pinguva Agent](ru/BUSINESS_API_AGENT_INTEGRATION.md)
+- [Описание Pinguva Agent для службы ИБ](ru/SECURITY_REVIEW.md)
 
 Английские версии:
 
@@ -42,6 +45,7 @@ customer data or private repository paths.
 - [Agent Troubleshooting Runbook](en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
 - [MySQL, MariaDB and PostgreSQL Diagnostics](en/DATABASE_DIAGNOSTICS.md)
 - [Business API Monitoring with Pinguva Agent](en/BUSINESS_API_AGENT_INTEGRATION.md)
+- [Security review for customer IT and security teams](en/SECURITY_REVIEW.md)
 
 Эти документы можно публиковать. В них нет внутренней логики backend, секретов,
 данных клиентов и приватных путей репозитория.

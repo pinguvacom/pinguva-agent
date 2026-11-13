@@ -40,7 +40,7 @@ The webhook remains only on the customer server. MySQL credentials remain local.
 
 Starting with `0.2.14`, Pinguva Agent can monitor customer-specific API routes from local Linux access logs after routes are selected in the Pinguva interface.
 
-The agent reports aggregated technical counters only: route, HTTP method, request count, response-code groups, latency when the log format contains request time, and masked traffic sources. It does not send request bodies, response bodies, headers, cookies, query strings, tokens, raw access-log lines, or personal data.
+The agent reports route-level technical aggregates: route, HTTP method, request count, response-code groups, latency when the log format contains request time, and traffic-source summaries. IP-looking source values are abbreviated, but other source strings may remain; avoid sensitive values in log source fields or configured labels. It does not send request bodies, response bodies, headers, cookies, query strings, tokens from observed applications, or raw access-log lines.
 
 From `0.2.23`, selected routes also report bounded per-minute counts of numeric HTTP error codes. The platform can display these by interval, not as individual request events.
 
@@ -51,9 +51,9 @@ From `0.2.23`, selected routes also report bounded per-minute counts of numeric 
 - Bitrix24 webhooks and MySQL credentials are stored and used locally on the customer server.
 - The agent does not transmit configuration-file contents. Configuration monitoring reports bounded metadata and a SHA-256 fingerprint rather than file content.
 - Bitrix24 diagnostics use aggregates and redacted data. Raw access logs, CRM data, raw SQL values, and HTTP request or response bodies are excluded.
-- Business API diagnostics use configured route patterns and aggregated counters. Raw access-log lines, query strings, request bodies, response bodies, headers, cookies, and tokens are excluded.
+- Business API diagnostics use configured route patterns and aggregated counters. Raw access-log lines, query strings, request bodies, response bodies, headers, cookies, and observed-application tokens are excluded. The agent's own authentication token is sent in a Bearer header.
 
-See [Security Policy](./SECURITY.md) and [Privacy Notes](./PRIVACY.md) for the detailed scope.
+For customer security approval, use the [agent data-flow and network review](./docs/en/SECURITY_REVIEW.md) or its [Russian version](./docs/ru/SECURITY_REVIEW.md). The agent sends technical telemetry and optional aggregates; it does not mean that no data leaves the server. See also [Security Policy](./SECURITY.md) and [Privacy Notes](./PRIVACY.md).
 
 ## Repository contents
 
@@ -119,6 +119,8 @@ Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreS
 - [Agent Troubleshooting Runbook](./docs/en/AGENT_TROUBLESHOOTING_RUNBOOK.md)
 - [MySQL, MariaDB and PostgreSQL Diagnostics](./docs/en/DATABASE_DIAGNOSTICS.md)
 - [Business API Monitoring with Pinguva Agent](./docs/en/BUSINESS_API_AGENT_INTEGRATION.md)
+- [Agent Security Review for Customer IT](./docs/en/SECURITY_REVIEW.md)
+- [Описание агента для службы ИБ](./docs/ru/SECURITY_REVIEW.md)
 - [API Collector examples](./examples/business-api-collector/README.md)
 - [Documentation index and Russian documentation](./docs/README.md)
 
