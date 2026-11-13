@@ -103,10 +103,39 @@ The agent service user needs read access. The collector reads at most the last
 32 MiB of each file and only reports the last completed minute, without
 backfilling historical records.
 
-Do not enter a public HTTPS log URL as the log path. The agent reads files
-locally; it does not fetch logs from websites. Deny web access to
+Do not enter a public HTTPS URL in a manual route's Log file field. Use the
+source setup below for URLs; the agent still reads files locally and never
+fetches logs from websites. Deny web access to
 `/ilab/monitoring/`, especially when `requestUrl` contains real identifiers or
 other request parameters.
+
+### Add a source and select routes (agent 0.2.22+)
+
+In Integrations & API, select the Linux server and paste a log URL such as
+`https://example.com/ilab/monitoring/request.json` into Outbound request logs,
+or enter an absolute local file path. The URL is only a path hint: Pinguva
+stores its pathname without the domain or parameters and never fetches the
+file over HTTP. The agent checks standard web roots (`/home/bitrix/www`,
+`/var/www/html`, `/srv/www`, `/usr/share/nginx/html`). If the file is elsewhere,
+enter its absolute local path. Customer file names may differ; supported source
+files have a `.json`, `.log`, or `.txt` extension inside a `monitoring`, `log`,
+or `logs` directory.
+
+After one or two agent reports, the UI shows the source status and the safe
+names, methods, and route templates found in the last 4 MiB of the JSON log.
+Records should include `name`, `method`, `url`, `httpCode`, and `totalTime` for
+full diagnostics. Check the routes to monitor and save the selection. Only
+selected routes become watched routes and appear in that server's API panel
+after the next report. A missing or unreadable file is reported as `missing`
+or `permission_denied`; it does not affect other servers or sources.
+
+The source list refreshes automatically while the first check is pending.
+After changing a path or permissions, use `Refresh sources`; this does not
+discard an unfinished route form.
+
+Removing a source removes only routes selected through it, not manually
+configured routes. Entering a URL does not make a public log safe: deny web
+access to the log on the customer server.
 
 Check access without printing the file contents:
 
