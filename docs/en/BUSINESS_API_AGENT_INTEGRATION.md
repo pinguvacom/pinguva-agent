@@ -129,6 +129,12 @@ selected routes become watched routes and appear in that server's API panel
 after the next report. A missing or unreadable file is reported as `missing`
 or `permission_denied`; it does not affect other servers or sources.
 
+To replace a technical log name such as `getPoints` with a human-readable
+label, open `Edit` on the configured route below the source list and change
+`Route name`. The label appears in the server's API panel; the route method,
+path, log file, and original `name` in the customer log are unchanged. Saving
+the source checkboxes again does not reset this label.
+
 The source list refreshes automatically while the first check is pending.
 After changing a path or permissions, use `Refresh sources`; this does not
 discard an unfinished route form.
