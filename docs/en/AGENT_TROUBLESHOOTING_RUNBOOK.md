@@ -17,6 +17,25 @@ Use this runbook when:
 - Telemetry endpoint: `POST /api/agent/report`.
 - First enrollment endpoint: `POST /api/agent/enroll`.
 
+## Agent Version and Updates
+
+The latest published source snapshot is `0.2.22`. The Pinguva server advertises
+the latest installable agent version in its dashboard summary; the server card
+compares it with the version from that server's most recent agent report.
+Publishing source code or deploying the Pinguva backend does not upgrade an
+agent already installed on a customer server.
+
+If the card offers an update, run its generated command on the customer server.
+The command downloads the agent binary from the Pinguva installation endpoint,
+replaces the installed binary, and restarts the service without re-enrollment.
+Allow at least one reporting interval (normally 60 seconds) before checking
+the version in the server card again. Business API log-source discovery requires
+agent `0.2.22` or later.
+
+If an older version is incorrectly marked current, first verify the Pinguva
+backend deployment and refresh the dashboard. A GitHub source release is not
+the binary served by the Pinguva installation endpoint.
+
 ## Linux Paths
 
 - service: `pinguva-agent`
