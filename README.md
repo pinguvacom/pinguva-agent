@@ -42,6 +42,8 @@ Starting with `0.2.14`, Pinguva Agent can monitor customer-specific API routes f
 
 The agent reports aggregated technical counters only: route, HTTP method, request count, response-code groups, latency when the log format contains request time, and masked traffic sources. It does not send request bodies, response bodies, headers, cookies, query strings, tokens, raw access-log lines, or personal data.
 
+From `0.2.23`, selected routes also report bounded per-minute counts of numeric HTTP error codes. The platform can display these by interval, not as individual request events.
+
 ## Security model
 
 - The agent does not accept inbound network connections.
@@ -90,6 +92,7 @@ Each version directory is self-contained and includes its own `go.mod`, README, 
 - [`0.2.20`](./0.2.20)
 - [`0.2.21`](./0.2.21)
 - [`0.2.22`](./0.2.22)
+- [`0.2.23`](./0.2.23)
 
 ## Repository scope
 
@@ -101,13 +104,13 @@ Pinguva Agent is not the complete Pinguva SaaS platform and this repository does
 
 ## Current source version
 
-The latest published source snapshot is [`0.2.22`](./0.2.22).
+The latest published source snapshot is [`0.2.23`](./0.2.23).
 
 Publishing a source snapshot does not update agents already installed on customer
 servers. Use the update command in the Pinguva server card after the platform
 has deployed the corresponding agent binary.
 
-Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreSQL diagnostics in `0.2.13`, Business API route monitoring from local Linux access logs in `0.2.14`, safe application log paths in `0.2.15`, automatic access-log discovery in `0.2.16`, status-before-request access-log formats in `0.2.17`, named route-parameter matching in `0.2.18`, JSONL and multiline PHP/cURL log detection in `0.2.19`, per-route log availability in `0.2.20`, local multiline outbound API JSON logs in `0.2.21`, and local named-route discovery for selected log sources in `0.2.22`. See the release-specific `CHANGELOG.md` files for details.
+Confirmed additions after `0.2.12` include separate MySQL, MariaDB, and PostgreSQL diagnostics in `0.2.13`, Business API route monitoring from local Linux access logs in `0.2.14`, safe application log paths in `0.2.15`, automatic access-log discovery in `0.2.16`, status-before-request access-log formats in `0.2.17`, named route-parameter matching in `0.2.18`, JSONL and multiline PHP/cURL log detection in `0.2.19`, per-route log availability in `0.2.20`, local multiline outbound API JSON logs in `0.2.21`, local named-route discovery for selected log sources in `0.2.22`, and bounded per-minute HTTP error-code counts for selected routes in `0.2.23`. See the release-specific `CHANGELOG.md` files for details.
 
 ## Documentation
 

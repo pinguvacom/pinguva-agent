@@ -19,7 +19,7 @@ Use this runbook when:
 
 ## Agent Version and Updates
 
-The latest published source snapshot is `0.2.22`. The Pinguva server advertises
+The latest published source snapshot is `0.2.23`. The Pinguva server advertises
 the latest installable agent version in its dashboard summary; the server card
 compares it with the version from that server's most recent agent report.
 Publishing source code or deploying the Pinguva backend does not upgrade an

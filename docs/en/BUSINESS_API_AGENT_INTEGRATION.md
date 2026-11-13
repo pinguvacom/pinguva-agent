@@ -159,6 +159,20 @@ email switch, a triggered alert rule, and the workspace email channel.
 Only aggregates are sent. Response bodies, headers, tokens, UUIDs, URL
 parameters, and raw log lines remain on the customer server.
 
+### API history and error codes (agent 0.2.23+)
+
+The server card offers independent 1-hour, 6-hour, 24-hour, 7-day, and 30-day
+views. For longer views, the Pinguva backend groups stored minute counters
+before drawing the chart. A zero means the agent reported no matching requests;
+a gap means no data arrived for that interval.
+
+Click a route name or error count to see the interval start, numeric HTTP code,
+and count of errors. Hover a chart point for the same summary. These are
+aggregates, not individual request timestamps. Agent 0.2.23 adds bounded
+per-minute error-code counts; older agents and older history cannot show exact
+codes. The agent never sends raw log lines, actual request URLs, response
+bodies, headers, or parameter values for this view.
+
 ### If the access log is unavailable
 
 The agent reads the log as the `pinguva-agent` service user, not as `root`. Check
